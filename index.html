@@ -79,7 +79,15 @@ body {
 .status-time { font-size: 15px; font-weight: 800; color: var(--text-primary); }
 .status-icons { display: flex; gap: 6px; align-items: center; color: var(--text-primary); }
 
-.app-content { flex: 1; overflow: hidden; position: relative; }
+.app-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+.app-content { flex: 1; overflow: hidden; position: relative; min-height: 0; }
 
 /* Screens */
 .screen {
@@ -763,10 +771,178 @@ select.form-input {
 #expenseOverlay .form-input { height: 40px; }
 #expenseOverlay .btn-primary  { height: 42px; }
 #expenseOverlay .btn-secondary { height: 38px; }
-@media (max-width: 480px) {
-  body { background: var(--surface); align-items: flex-start; }
-  .phone { width: 100%; height: 100dvh; border-radius: 0; }
+/* Pie row (mobile: column, desktop: row) */
+.pie-row { display: flex; flex-direction: column; }
+
+/* Cal body wrapper (mobile: column, desktop: row) */
+.cal-body { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.cal-left  { flex-shrink: 0; }
+.cal-right { flex: 1; }
+
+/* ══ DESKTOP LAYOUT (769px+) ══ */
+@media (min-width: 769px) {
+  body {
+    background: #1a1a2e;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+    padding: 0;
+  }
+  .phone {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* App layout: horizontal — nav left, content right */
+  .app-layout {
+    flex-direction: row-reverse;
+  }
+  .app-content {
+    flex: 1;
+  }
+
+  /* ── LEFT VERTICAL NAV ── */
+  .bottom-nav {
+    position: relative !important;
+    width: 108px;
+    height: 100%;
+    flex-direction: column;
+    border-top: none;
+    border-right: 1px solid rgba(255,255,255,0.12);
+    border-left: none;
+    padding: 0;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+  }
+  .nav-item {
+    width: 100%;
+    flex-direction: column;
+    padding: 18px 8px;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+  .nav-item:last-child { border-bottom: none; }
+  .nav-label { font-size: 9px; }
+  .nav-icon { font-size: 22px; }
+
+  /* Active indicator: left accent bar */
+  .nav-item.active { background: rgba(255,255,255,0.1); }
+  .nav-item.active .nav-label { color: #fff; }
+  .nav-item.active .nav-icon { transform: none; }
+
+  /* Add button pushed to bottom */
+  .nav-item.nav-add {
+    margin-top: auto;
+    border-radius: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    flex: 0 0 auto;
+    transform: none !important;
+    border: none !important;
+    border-top: 1px solid rgba(255,255,255,0.2) !important;
+    padding: 20px 8px !important;
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* Selection bar: full width (nav is in flow now) */
+  .sel-bar {
+    right: 0;
+    bottom: 0;
+  }
+
+  /* No extra bottom padding on screens */
+  .screen { padding-bottom: 0 !important; }
+  #screen-home { padding-bottom: 0 !important; }
+  .home-scroll-area { padding-bottom: 24px; }
+
+  /* ── ANALYTICS: PIE + LEGEND SIDE BY SIDE ── */
+  .pie-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 40px;
+  }
+  .pie-row canvas { flex-shrink: 0; }
+  .pie-legend {
+    flex: 1;
+    margin-top: 0;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  /* ── CALENDAR: GRID + DETAIL SIDE BY SIDE ── */
+  #screen-calendar { overflow: hidden; }
+  .cal-body {
+    flex-direction: row;
+    flex: 1;
+    overflow: hidden;
+  }
+  .cal-left {
+    flex: 0 0 420px;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+  }
+  .cal-right {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--surface-container);
+  }
+  /* Always show detail pane on desktop */
+  #calDetail { display: block !important; margin: 0; }
+
+  /* ── EXPENSE OVERLAY: CENTERED MODAL ── */
+  #expenseOverlay {
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  #expenseOverlay .sheet {
+    width: 580px;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 20px;
+    height: auto;
+    animation: zoomIn 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    padding: 28px 28px 24px;
+  }
+  #expenseOverlay .sheet .sheet-handle { display: none; }
+  #expenseOverlay .sheet .sheet-title  {
+    display: block; font-size: 18px; font-weight: 800;
+    color: var(--text-primary); margin-bottom: 16px;
+  }
+  .expense-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+  }
+  .expense-modal-grid .form-group { margin-bottom: 14px; }
+  .expense-modal-full { grid-column: 1 / -1; }
+
+  /* Other sheet overlays: centered */
+  #accountOverlay, #categoryOverlay, #exportOverlay {
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  #accountOverlay .sheet, #categoryOverlay .sheet, #exportOverlay .sheet {
+    width: 440px; max-width: 100%; max-height: 85vh;
+    border-radius: 20px; height: auto;
+    animation: zoomIn 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  #expenseActionOverlay {
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  #expenseActionOverlay .action-sheet {
+    width: 400px; border-radius: 20px;
+    animation: zoomIn 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  }
 }
+
 
 /* ── GLOBAL HEADER ── */
 .global-header {
@@ -1018,6 +1194,9 @@ select.form-input {
     </div>
   </div>
 
+  <!-- App Layout Wrapper -->
+  <div class="app-layout">
+
   <!-- App Content -->
   <div class="app-content">
 
@@ -1134,8 +1313,10 @@ select.form-input {
       </div>
       <div class="overview-card">
         <div class="overview-card-title">By Category</div>
-        <canvas id="pieChart" width="240" height="240"></canvas>
-        <div class="pie-legend" id="pieLegend"></div>
+        <div class="pie-row">
+          <canvas id="pieChart" width="240" height="240"></canvas>
+          <div class="pie-legend" id="pieLegend"></div>
+        </div>
       </div>
     </div>
 
@@ -1145,13 +1326,19 @@ select.form-input {
         <span class="screen-subbar-title">📅 Calendar</span>
         <span id="calMonthTotal" class="cal-month-total">₹0</span>
       </div>
-      <div class="cal-nav">
-        <button class="cal-arrow" onclick="calShift(-1)">‹</button>
-        <span class="cal-month-label" id="calMonthLabel"></span>
-        <button class="cal-arrow" onclick="calShift(1)">›</button>
+      <div class="cal-body">
+        <div class="cal-left">
+          <div class="cal-nav">
+            <button class="cal-arrow" onclick="calShift(-1)">‹</button>
+            <span class="cal-month-label" id="calMonthLabel"></span>
+            <button class="cal-arrow" onclick="calShift(1)">›</button>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <div class="cal-right">
+          <div class="cal-detail" id="calDetail" style="display:none"></div>
+        </div>
       </div>
-      <div class="cal-grid" id="calGrid"></div>
-      <div class="cal-detail" id="calDetail" style="display:none"></div>
     </div>
 
   </div><!-- /app-content -->
@@ -1188,6 +1375,8 @@ select.form-input {
     </button>
   </nav>
 
+  </div><!-- /app-layout -->
+
   <!-- FAB removed [D] -->
 
   <!-- Selection Toolbar [A] -->
@@ -1208,41 +1397,39 @@ select.form-input {
       <div class="sheet-handle"></div>
       <div class="sheet-title" id="expenseSheetTitle">Add Expense</div>
 
-      <div class="form-group">
-        <label class="form-label">Amount (₹)</label>
-        <div class="amount-input-wrap">
-          <span class="currency-symbol">₹</span>
-          <input type="number" class="form-input" id="expenseAmount" placeholder="0.00" min="0" step="0.01" autofocus autoselect>
+      <div class="expense-modal-grid">
+        <div class="form-group expense-modal-full">
+          <label class="form-label">Amount (₹)</label>
+          <div class="amount-input-wrap">
+            <span class="currency-symbol">₹</span>
+            <input type="number" class="form-input" id="expenseAmount" placeholder="0.00" min="0" step="0.01" autofocus autoselect>
+          </div>
         </div>
-      </div>
-      <div style="display:flex;gap:10px;">
-        <div class="form-group" style="flex:1;min-width:0;">
+        <div class="form-group">
           <label class="form-label">Date</label>
           <input type="date" class="form-input" id="expenseDate" style="padding:0 8px;font-size:13px;">
         </div>
-        <div class="form-group" style="flex:1;min-width:0;">
+        <div class="form-group">
           <label class="form-label">Time</label>
           <input type="time" class="form-input" id="expenseTime" style="padding:0 8px;font-size:13px;">
         </div>
-      </div>
-      <div style="display:flex;gap:10px;">
-        <div class="form-group" style="flex:1;min-width:0;">
+        <div class="form-group">
           <label class="form-label">Account</label>
           <select class="form-input" id="expenseAccount" style="font-size:13px;padding:0 28px 0 8px;"></select>
         </div>
-        <div class="form-group" style="flex:1;min-width:0;">
+        <div class="form-group">
           <label class="form-label">Category</label>
           <select class="form-input" id="expenseCategory" style="font-size:13px;padding:0 28px 0 8px;"></select>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Note</label>
-        <textarea class="form-textarea" id="expenseNote" placeholder="What was this for?"></textarea>
-      </div>
+        <div class="form-group expense-modal-full">
+          <label class="form-label">Note</label>
+          <textarea class="form-textarea" id="expenseNote" placeholder="What was this for?"></textarea>
+        </div>
 
-      <div style="display:flex;gap:10px;">
-        <button class="btn-secondary" style="flex:1;" onclick="close_('expenseOverlay')">Cancel</button>
-        <button class="btn-primary" style="flex:1;" id="expenseSubmitBtn" onclick="submitExpense()">Add Expense</button>
+        <div class="expense-modal-full" style="display:flex;gap:10px;">
+          <button class="btn-secondary" style="flex:1;" onclick="close_('expenseOverlay')">Cancel</button>
+          <button class="btn-primary" style="flex:1;" id="expenseSubmitBtn" onclick="submitExpense()">Add Expense</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2551,9 +2738,19 @@ function calSelectDay(dateStr) {
   renderCalendar();
 }
 
+function isDesktop() { return window.innerWidth >= 769; }
+
 function renderCalDetail() {
   const el = document.getElementById('calDetail');
-  if (!calSelected) { el.style.display='none'; return; }
+  if (!calSelected) {
+    if (isDesktop()) {
+      el.style.display = 'block';
+      el.innerHTML = `<div class="cal-empty-day" style="padding:32px 16px;font-size:13px;color:var(--text-secondary);text-align:center;">← Select a day to view expenses</div>`;
+    } else {
+      el.style.display = 'none';
+    }
+    return;
+  }
   const dayExpenses = S.expenses
     .filter(e => e.date === calSelected)
     .sort((a,b) => a.time > b.time ? -1 : 1);
